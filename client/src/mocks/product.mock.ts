@@ -8,8 +8,8 @@ export const mockProducts: ProductWithHistory[] = [
 		price: 12500000,
 		stock: 6,
 		status: true,
-		createdAt: new Date().toISOString(),
-		updatedAt: new Date().toISOString(),
+		created_at: new Date().toISOString(),
+		updated_at: new Date().toISOString(),
 		history: [
 			{
 				id: 1,
@@ -27,8 +27,8 @@ export const mockProducts: ProductWithHistory[] = [
 		price: 1650000,
 		stock: 12,
 		status: true,
-		createdAt: new Date().toISOString(),
-		updatedAt: new Date().toISOString(),
+		created_at: new Date().toISOString(),
+		updated_at: new Date().toISOString(),
 		history: [
 			{
 				id: 1,
@@ -46,8 +46,8 @@ export const mockProducts: ProductWithHistory[] = [
 		price: 480000,
 		stock: 18,
 		status: true,
-		createdAt: new Date().toISOString(),
-		updatedAt: new Date().toISOString(),
+		created_at: new Date().toISOString(),
+		updated_at: new Date().toISOString(),
 		history: [
 			{
 				id: 1,

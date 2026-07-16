@@ -5,6 +5,6 @@ export interface Product {
 	price: number;
 	stock: number;
 	status: boolean;
-	createdAt: string;
-	updatedAt: string;
+	created_at: string;
+	updated_at: string;
 }

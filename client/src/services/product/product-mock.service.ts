@@ -30,8 +30,8 @@ class ProductMockService {
 			id: idProduct,
 			...dto,
 			status: true,
-			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString(),
+			created_at: new Date().toISOString(),
+			updated_at: new Date().toISOString(),
 			history: [this.createHistory(idProduct, "CREATE", "Producto creado")],
 		};
 
@@ -55,7 +55,7 @@ class ProductMockService {
 		products[index] = {
 			...product,
 			...dto,
-			updatedAt: new Date().toISOString(),
+			updated_at: new Date().toISOString(),
 			history: [
 				...product.history,
 				this.createHistory(id, "UPDATE", "Producto actualizado"),
@@ -79,7 +79,7 @@ class ProductMockService {
 		products[index] = {
 			...product,
 			status: newStatus,
-			updatedAt: new Date().toISOString(),
+			updated_at: new Date().toISOString(),
 			history: [
 				...product.history,
 				this.createHistory(
