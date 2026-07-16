@@ -1,14 +1,22 @@
 import { createRouter, createWebHistory } from "vue-router";
 
+import MainLayout from "@/layouts/MainLayout.vue";
 import ProductsView from "@/views/ProductsView.vue";
 
 const router = createRouter({
 	history: createWebHistory(),
+
 	routes: [
 		{
 			path: "/",
-			name: "products",
-			component: ProductsView,
+			component: MainLayout,
+			children: [
+				{
+					path: "",
+					name: "products",
+					component: ProductsView,
+				},
+			],
 		},
 	],
 });

@@ -1,18 +1,24 @@
 import { reactive } from "vue";
-import type { CreateProductDto } from "@/types/product";
 
-export function useProductForm() {
+import type { CreateProductDto, Product } from "@/types/product";
+
+export function useProductForm(product?: Product | null) {
 	const form = reactive<CreateProductDto>({
-		name: "",
-		description: "",
-		price: 0,
-		stock: 0,
+		name: product?.name ?? "",
+		description: product?.description ?? "",
+		price: product?.price ?? 0,
+		stock: product?.stock ?? 0,
 	});
+
 	function reset() {
 		form.name = "";
 		form.description = "";
 		form.price = 0;
 		form.stock = 0;
 	}
-	return { form, reset };
+
+	return {
+		form,
+		reset,
+	};
 }

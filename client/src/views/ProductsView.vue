@@ -1,50 +1,102 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
-import BaseButton from "@/components/ui/form/BaseButton.vue";
+import { computed, onMounted, ref } from "vue";
+import { toast } from "vue-sonner";
+
 import ProductModal from "@/components/products/ProductModal.vue";
 import ProductTable from "@/components/products/ProductTable.vue";
+import BaseButton from "@/components/ui/form/BaseButton.vue";
+import ConfirmModal from "@/components/ui/overlay/ConfirmModal.vue";
+
 import EmptyState from "@/components/ui/feedback/EmptyState.vue";
 import ErrorState from "@/components/ui/feedback/ErrorState.vue";
 import LoadingSpinner from "@/components/ui/feedback/LoadingSpinner.vue";
+
 import { useProductStore } from "@/stores/product.store";
 
-import type { Product } from "@/types/product";
+import ProductHistoryModal from "@/components/products/ProductHistoryModal.vue";
 import type { CreateProductDto } from "@/types/product";
+import type { ProductWithHistory } from "@/types/responses";
 
 const productStore = useProductStore();
+
 const { products, loading, error } = storeToRefs(productStore);
+
 const hasProducts = computed(() => products.value.length > 0);
+
+const showProductModal = ref(false);
+const showDeleteModal = ref(false);
+const showHistoryModal = ref(false);
+
+const selectedProduct = ref<ProductWithHistory | null>(null);
 
 onMounted(async () => {
 	await productStore.getProducts();
 });
-
-const showProductModal = ref(false);
-const selectedProduct = ref<Product | null>(null);
 
 function openCreateModal() {
 	selectedProduct.value = null;
 	showProductModal.value = true;
 }
 
-function openEditModal(product: Product) {
+function openEditModal(product: ProductWithHistory) {
 	selectedProduct.value = product;
 	showProductModal.value = true;
 }
 
-async function createProduct(dto: CreateProductDto) {
-	await productStore.createProduct(dto);
+async function saveProduct(dto: CreateProductDto) {
+	try {
+		if (selectedProduct.value) {
+			await productStore.updateProduct(selectedProduct.value.id, dto);
 
-	showProductModal.value = false;
+			toast.success("Producto actualizado correctamente.");
+		} else {
+			await productStore.createProduct(dto);
+
+			toast.success("Producto creado correctamente.");
+		}
+
+		showProductModal.value = false;
+		selectedProduct.value = null;
+	} catch {
+		toast.error("No fue posible guardar el producto.");
+	}
 }
 
-function editProduct(product: Product) {
-	console.log(product);
+function openDeleteModal(product: ProductWithHistory) {
+	selectedProduct.value = product;
+	showDeleteModal.value = true;
 }
 
-function deleteProduct(product: Product) {
-	console.log(product);
+async function confirmDelete() {
+	if (!selectedProduct.value) {
+		return;
+	}
+
+	try {
+		await productStore.deleteProduct(selectedProduct.value.id);
+
+		toast.success("Producto eliminado correctamente.");
+
+		showDeleteModal.value = false;
+		selectedProduct.value = null;
+	} catch {
+		toast.error("No fue posible eliminar el producto.");
+	}
+}
+
+async function handleStatusChange(product: ProductWithHistory) {
+	try {
+		await productStore.changeStatusProduct(product.id);
+		toast.success("Estado del producto actualizado correctamente.");
+	} catch {
+		toast.error("No fue posible actualizar el estado del producto.");
+	}
+}
+
+function openHistoryModal(product: ProductWithHistory) {
+	selectedProduct.value = product;
+	showHistoryModal.value = true;
 }
 </script>
 
@@ -53,25 +105,45 @@ function deleteProduct(product: Product) {
 		<section class="mx-auto max-w-7xl p-8">
 			<div class="mb-8 flex items-center justify-between">
 				<h1 class="text-3xl font-bold">Productos</h1>
-				<BaseButton @click="openCreateModal">Nuevo producto</BaseButton>
+
+				<BaseButton @click="openCreateModal"> Nuevo producto </BaseButton>
 			</div>
+
 			<LoadingSpinner v-if="loading" />
+
 			<ErrorState v-else-if="error" :message="error" />
+
 			<ProductTable
 				v-else-if="hasProducts"
 				:products="products"
 				@edit="openEditModal"
-				@delete="deleteProduct"
+				@delete="openDeleteModal"
+				@status-change="handleStatusChange"
+				@history="openHistoryModal"
 			/>
+
 			<EmptyState
 				v-else
 				title="No hay productos"
 				description="Empieza creando el primer producto."
 			/>
+
 			<ProductModal
 				v-model="showProductModal"
 				:product="selectedProduct"
-				@submit="createProduct"
+				@submit="saveProduct"
+			/>
+
+			<ConfirmModal
+				v-model="showDeleteModal"
+				title="Eliminar producto"
+				:message="`¿Deseas eliminar '${selectedProduct?.name}'?`"
+				@confirm="confirmDelete"
+			/>
+
+			<ProductHistoryModal
+				v-model="showHistoryModal"
+				:product="selectedProduct"
 			/>
 		</section>
 	</main>

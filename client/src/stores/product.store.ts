@@ -1,14 +1,14 @@
-import { defineStore } from "pinia";
-import { ref } from "vue";
-import productService from "@/services/product.service";
+import productService from "@/services/product";
 import type {
 	CreateProductDto,
-	Product,
-	UpdateProductDto,
+	UpdateProductDto
 } from "@/types/product";
+import type { ProductWithHistory } from "@/types/responses";
+import { defineStore } from "pinia";
+import { ref } from "vue";
 
 export const useProductStore = defineStore("product", () => {
-	const products = ref<Product[]>([]);
+	const products = ref<ProductWithHistory[]>([]);
 	const loading = ref<boolean>(false);
 	const error = ref<string>("");
 
@@ -18,8 +18,10 @@ export const useProductStore = defineStore("product", () => {
 
 		try {
 			products.value = await productService.getProducts();
-		} catch {
-			error.value = "Error obteniendo los productos.";
+		} catch (err) {
+			error.value = "Error creando el producto.";
+
+			throw err;
 		} finally {
 			loading.value = false;
 		}
@@ -33,8 +35,10 @@ export const useProductStore = defineStore("product", () => {
 			const product = await productService.createProduct(dto);
 
 			products.value.push(product);
-		} catch {
+		} catch (err) {
 			error.value = "Error creando el producto.";
+
+			throw err;
 		} finally {
 			loading.value = false;
 		}
@@ -52,8 +56,30 @@ export const useProductStore = defineStore("product", () => {
 			if (index !== -1) {
 				products.value[index] = updatedProduct;
 			}
-		} catch {
-			error.value = "Error actualizando el producto.";
+		} catch (err) {
+			error.value = "Error creando el producto.";
+
+			throw err;
+		} finally {
+			loading.value = false;
+		}
+	}
+
+	async function changeStatusProduct(id: number) {
+		loading.value = true;
+		error.value = "";
+
+		try {
+			const updatedProduct = await productService.changeStatusProduct(id);
+			const index = products.value.findIndex((product) => product.id === id);
+
+			if (index !== -1) {
+				products.value[index] = updatedProduct;
+			}
+		} catch (err) {
+			error.value = "Error cambiando el estado del producto.";
+
+			throw err;
 		} finally {
 			loading.value = false;
 		}
@@ -67,8 +93,10 @@ export const useProductStore = defineStore("product", () => {
 			await productService.deleteProduct(id);
 
 			products.value = products.value.filter((product) => product.id !== id);
-		} catch {
-			error.value = "Error eliminando el producto.";
+		} catch (err) {
+			error.value = "Error creando el producto.";
+
+			throw err;
 		} finally {
 			loading.value = false;
 		}
@@ -81,6 +109,7 @@ export const useProductStore = defineStore("product", () => {
 		getProducts,
 		createProduct,
 		updateProduct,
+		changeStatusProduct,
 		deleteProduct,
 	};
 });

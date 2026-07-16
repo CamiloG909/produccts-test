@@ -2,10 +2,14 @@
 import BaseModal from "@/components/ui/overlay/BaseModal.vue";
 import ProductForm from "./ProductForm.vue";
 
-import type { CreateProductDto } from "@/types/product";
+import type {
+	Product,
+	CreateProductDto,
+} from "@/types/product";
 
 interface Props {
 	modelValue: boolean;
+	product?: Product | null;
 }
 
 defineProps<Props>();
@@ -23,10 +27,13 @@ function handleSubmit(dto: CreateProductDto) {
 
 <template>
 	<BaseModal
-		title="Nuevo producto"
+		title="Producto"
 		:model-value="modelValue"
-		@update:model-value="$emit('update:modelValue', $event)"
+		@update:model-value="(value) => emit('update:modelValue', value)"
 	>
-		<ProductForm @submit="handleSubmit" />
+		<ProductForm
+			:product="product"
+			@submit="handleSubmit"
+		/>
 	</BaseModal>
 </template>
