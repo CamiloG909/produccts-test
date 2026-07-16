@@ -33,7 +33,7 @@ class ProductService {
 
 	async changeStatusProduct(id: number): Promise<ProductWithHistory> {
 		const response = await api.patch<ProductWithHistory>(
-			`/products/${id}/change-status`,
+			`/products/${id}/status`,
 		);
 
 		return response.data;

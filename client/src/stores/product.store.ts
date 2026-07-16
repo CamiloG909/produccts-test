@@ -19,7 +19,7 @@ export const useProductStore = defineStore("product", () => {
 		try {
 			products.value = await productService.getProducts();
 		} catch (err) {
-			error.value = "Error creando el producto.";
+			error.value = "Error obteniendo los productos.";
 
 			throw err;
 		} finally {
@@ -57,7 +57,7 @@ export const useProductStore = defineStore("product", () => {
 				products.value[index] = updatedProduct;
 			}
 		} catch (err) {
-			error.value = "Error creando el producto.";
+			error.value = "Error actualizando el producto.";
 
 			throw err;
 		} finally {
@@ -94,7 +94,7 @@ export const useProductStore = defineStore("product", () => {
 
 			products.value = products.value.filter((product) => product.id !== id);
 		} catch (err) {
-			error.value = "Error creando el producto.";
+			error.value = "Error eliminando el producto.";
 
 			throw err;
 		} finally {

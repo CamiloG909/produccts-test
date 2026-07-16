@@ -4,16 +4,22 @@ Aplicación de gestión de productos desarrollada como prueba técnica.
 
 El proyecto está desarrollado con Vue 3 + TypeScript utilizando Vite como herramienta de construcción.
 
+La aplicación está preparada para ejecutarse mediante Docker Compose, levantando los servicios necesarios para el funcionamiento del proyecto.
+
 ---
 
 # Estructura del proyecto
 
 ```
-produccts-test/
+products-test/
 │
-├── client/          # Aplicación frontend Vue
+├── client/                       # Aplicación frontend Vue
 │
-├── create.sql       # Script de creación de base de datos PostgreSQL
+├── server/                       # API backend Express + TypeScript
+│
+├── create.sql                    # Script de creación de base de datos PostgreSQL
+│
+├── docker-compose.yml            # Orquestación de servicios Docker
 │
 └── README.md
 ```
@@ -33,9 +39,20 @@ produccts-test/
 - Axios
 - Zod
 
+## Backend
+
+- Node.js
+- Express
+- TypeScript
+
 ## Base de datos
 
 - PostgreSQL
+
+## Infraestructura
+
+- Docker
+- Docker Compose
 
 ---
 
@@ -43,68 +60,44 @@ produccts-test/
 
 Versiones recomendadas:
 
-| Tecnología | Versión |
-| ---------- | ------- |
-| Node.js    | >= 24.x |
-| npm        | >= 11.x |
-| Python     | >= 3.11 |
-| PostgreSQL | >= 16.x |
+| Tecnología     | Versión |
+| -------------- | ------- |
+| Docker         | >= 27.x |
+| Docker Compose | >= 2.x  |
+| Node.js        | >= 24.x |
+| npm            | >= 11.x |
 
 Verificar instalaciones:
 
 ```bash
+docker --version
+
+docker compose version
+
 node -v
 
 npm -v
-
-psql --version
-```
-
----
-
-# Configuración de base de datos
-
-Crear una base de datos PostgreSQL:
-
-```sql
-CREATE DATABASE products_db;
-```
-
-Ejecutar el script de creación incluido en el proyecto:
-
-```bash
-psql -U postgres -d products_db -f create.sql
-```
-
-El script creará las tablas necesarias y sus relaciones.
-
----
-
-# Instalación del proyecto
-
-Ingresar a la carpeta del cliente:
-
-```bash
-cd client
-```
-
-Instalar dependencias:
-
-```bash
-npm install
 ```
 
 ---
 
 # Variables de entorno
 
-Crear el archivo `.env` basado en el archivo de ejemplo:
+El proyecto utiliza archivos `.env` independientes para cada aplicación.
 
-```bash
-cp .env.example .env
+## Cliente
+
+Crear:
+
+```
+client/.env
 ```
 
-Configurar las variables necesarias.
+basado en:
+
+```
+client/.env.example
+```
 
 Ejemplo:
 
@@ -114,25 +107,128 @@ VITE_API_URL=http://localhost:3000/api
 
 ---
 
-# Ejecución en desarrollo
+## Servidor
 
-Iniciar la aplicación:
+Crear:
 
-```bash
-npm run dev
+```
+server/.env
 ```
 
-La aplicación estará disponible en:
+basado en:
+
+```
+server/.env.example
+```
+
+Ejemplo:
+
+```env
+PORT=3000
+
+DB_HOST=postgres
+DB_PORT=5432
+DB_NAME=products_db
+DB_USER=postgres
+DB_PASSWORD=postgres
+```
+
+---
+
+# Ejecución con Docker
+
+Desde la raíz del proyecto:
+
+```bash
+docker compose up --build
+```
+
+Este comando:
+
+- Crea el contenedor PostgreSQL
+- Ejecuta automáticamente el script `create.sql`
+- Levanta la API backend
+- Levanta la aplicación frontend
+
+---
+
+# Servicios disponibles
+
+## Frontend
 
 ```
 http://localhost:5173
+```
+
+## API
+
+```
+http://localhost:3000
+```
+
+## PostgreSQL
+
+```
+Host: localhost
+Port: 5432
+Database: products_db
+User: postgres
+Password: postgres
+```
+
+---
+
+# Desarrollo local
+
+También es posible ejecutar los servicios individualmente.
+
+## Base de datos únicamente
+
+```bash
+docker compose up postgres
+```
+
+## Backend
+
+```bash
+cd server
+
+npm install
+
+npm run dev
+```
+
+## Frontend
+
+```bash
+cd client
+
+npm install
+
+npm run dev
+```
+
+---
+
+# Detener servicios
+
+```bash
+docker compose down
+```
+
+Para eliminar también la información almacenada en PostgreSQL:
+
+```bash
+docker compose down -v
 ```
 
 ---
 
 # Scripts disponibles
 
-## Desarrollo
+## Frontend
+
+### Desarrollo
 
 ```bash
 npm run dev
@@ -142,7 +238,7 @@ Ejecuta la aplicación en modo desarrollo.
 
 ---
 
-## Build producción
+### Build producción
 
 ```bash
 npm run build
@@ -152,7 +248,7 @@ Genera la compilación optimizada para producción.
 
 ---
 
-## Preview
+### Preview
 
 ```bash
 npm run preview
@@ -182,6 +278,7 @@ La aplicación utiliza:
 - Vue Router para manejo de rutas
 - Pinia para gestión de estado global
 - Servicios separados para consumo de datos
+- Componentes reutilizables
 - Tipado mediante TypeScript
 
 ---
@@ -214,8 +311,32 @@ Archivo:
 products-api.postman_collection.json
 ```
 
+Para importarla:
+
+1. Abrir Postman.
+2. Seleccionar **Import**.
+3. Cargar el archivo de colección.
+
 Configurar la variable:
 
 ```
 baseUrl
 ```
+
+Ejemplo:
+
+```
+http://localhost:3000/api
+```
+
+---
+
+# Endpoints disponibles
+
+| Método | Endpoint                | Descripción                    |
+| ------ | ----------------------- | ------------------------------ |
+| GET    | `/products`             | Lista todos los productos      |
+| POST   | `/products`             | Crea un producto               |
+| PUT    | `/products/{id}`        | Actualiza un producto          |
+| DELETE | `/products/{id}`        | Elimina un producto            |
+| PATCH  | `/products/{id}/status` | Cambia estado del producto     |
