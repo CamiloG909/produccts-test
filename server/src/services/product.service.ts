@@ -19,6 +19,7 @@ async function buildProductResponse(id: number): Promise<ProductWithHistory> {
 
   return {
     ...product,
+    price: Number(product.price),
     history,
   };
 }
