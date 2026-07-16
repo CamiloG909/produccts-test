@@ -5,7 +5,8 @@ CREATE    TABLE products (
           price NUMERIC(12, 2) NOT NULL CHECK (price > 0),
           stock INTEGER NOT NULL CHECK (stock >= 0),
           status BOOLEAN NOT NULL DEFAULT TRUE,
-          created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+          created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
           );
 CREATE    TABLE product_history (
           id BIGSERIAL PRIMARY KEY,

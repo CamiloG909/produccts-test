@@ -9,6 +9,6 @@ app.use(cors());
 
 app.use(express.json());
 
-app.use("/products", productsRouter);
+app.use("/api/products", productsRouter);
 
 export default app;
