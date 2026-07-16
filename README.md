@@ -126,11 +126,11 @@ Ejemplo:
 ```env
 PORT=3000
 
-DB_HOST=postgres
-DB_PORT=5432
-DB_NAME=products_db
-DB_USER=postgres
-DB_PASSWORD=postgres
+POSTGRES_DB=products_db
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
 ```
 
 ---
